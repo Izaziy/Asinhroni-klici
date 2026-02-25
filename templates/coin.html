@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Coin Flip</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJ+Y9O2Q3tàP3gVVGA5MXhXc8qVb2fT5rj30="
+            crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>Flip a Coin</h1>
+    <img id="flipBtn" src="{{ url_for('static', filename='Posnetek zaslona 2026-02-25 110230.png') }}" alt="Flip coin" style="cursor:pointer; max-width:200px; height:auto;" />
+    <div id="rezultat">
+    </div>
+
+    <script>
+    function doFlip() {
+        $.ajax({
+            url: "/coinFlip",
+            method: "GET",         
+            data: { key: "value" },
+            success: function(odgovor) {
+                $("#rezultat").html(
+                    '<p>Status: ' + odgovor.status + '</p>' +
+                    '<img src="' + odgovor.img + '" alt="coin image" />'
+                );
+            }
+        });
+    }
+
+    document.getElementById("flipBtn").addEventListener("click", doFlip);
+
+
+    </script>
+</body>
+</html>
