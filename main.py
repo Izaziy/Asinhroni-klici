@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import random
 
 QUOTES = [
@@ -51,6 +51,20 @@ def random_quote():
     return jsonify(quote)
 
 
+@app.route("/randomNum", methods=["GET", "POST"])
+def random_num():
+    if request.method == "GET":
+        return render_template("randomnum.html")
+    elif request.method == "POST":
+        min_val = request.form.get("min")
+        max_val = request.form.get("max")
+        
+        min_val = int(min_val)
+        max_val = int(max_val)
+        
+        number = random.randint(min_val, max_val)
+        
+        return jsonify({"number": number, "min": min_val, "max": max_val})
 
 
 if __name__ == "__main__":
