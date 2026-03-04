@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 import random
+import string
 
 QUOTES = [
     {"quote": "Sometimes you win, sometimes you learn", "author": "John C. Maxwell"},
@@ -65,6 +66,26 @@ def random_num():
         number = random.randint(min_val, max_val)
         
         return jsonify({"number": number, "min": min_val, "max": max_val})
+
+@app.route("/randPassword", methods=["GET", "POST"])
+def rand_password():
+    if request.method == "GET":
+        return render_template("randpassword.html")
+    elif request.method == "POST":
+        length = request.form.get("length")
+        length = int(length)
+        
+        lowercase = string.ascii_lowercase
+        uppercase = string.ascii_uppercase
+        digits = string.digits
+        special = "!@#$%^&*()_+-=[]{}|;:,.<>?"
+        
+        all_chars = lowercase + uppercase + digits + special
+        
+        password = ''.join(random.choice(all_chars) for _ in range(length))
+        
+        return jsonify({"password": password, "length": length})
+
 
 
 if __name__ == "__main__":
