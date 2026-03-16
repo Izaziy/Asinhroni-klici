@@ -1,6 +1,8 @@
 from flask import Flask, render_template, jsonify, request
 import random
 import string
+from tinydb import TinyDB
+import requests
 
 QUOTES = [
     {"quote": "Sometimes you win, sometimes you learn", "author": "John C. Maxwell"},
@@ -16,6 +18,7 @@ QUOTES = [
 ]
 
 app = Flask(__name__)
+db = TinyDB('db.json')
 
 
 @app.route("/")
@@ -85,6 +88,31 @@ def rand_password():
         password = ''.join(random.choice(all_chars) for _ in range(length))
         
         return jsonify({"password": password, "length": length})
+    
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "GET":
+        return render_template("registration.html")
+    elif request.method == "POST":
+        email = request.form.get("email")
+        country = request.form.get("country").upper()
+        name = request.form.get("name")
+        password = request.form.get("password")
+        
+        response = requests.get(f"https://api.nationalize.io/?name={name}")
+        data = response.json()
+        
+        countries = [c['country_id'] for c in data.get('country', [])]
+        if country in countries:
+
+            db.insert({'email': email, 'country': country, 'name': name, 'password': password})
+            message = "Registration successful!"
+        else:
+            message = "Name does not match the country."
+        
+        return render_template("registration.html", message=message)
+
 
 
 
